@@ -8,7 +8,7 @@ This is my tech log based on Jekyll. You can visit it [here](http://dotplan.ml).
 
 # About Theme
 
-This is a blog theme based on jekyll. You can use on your own blog. Before you use it, please click a star on [this respository](https://github.com/Gaohaoyang/gaohaoyang.github.io/). You will encourage me to do more great things!
+This is a blog theme based on Jekyll. You can use on your own blog. Before you use it, please click a star on [this respository](https://github.com/Gaohaoyang/gaohaoyang.github.io/). You will encourage the theme author Mr. Gao Haoyang to do more great things!
 
 ## Sample
 
