@@ -59,7 +59,7 @@ Tumblr 上的图片分两种：装饰用的底图、logo 等等，以及发表�
 (注#2：个人域名的 DNS 服务商最好支持 `catch-all`，即 `*.xXx.com` 这种形式子域名的解析，这样就不需要额外另建一个 `static.xXx.com` 这样的子域名。)  
 
 然后在配置尾部添加：
-<pre><code>server
+<pre><code class="markdown">server
 {
 listen 80;
 server_name ~^(?<subdomain>\w+)\.jsv\.me;
