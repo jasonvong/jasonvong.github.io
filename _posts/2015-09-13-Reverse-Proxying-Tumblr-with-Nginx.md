@@ -12,7 +12,7 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ## 序
 
-终于搬砖把自己的 Tumblr 搭好，然后发现手机通过中移动的网络访问 Tumblr 有困难👀，WQNMLGB。考虑过迁移到 Github 上或利用 API 搭建一个 webapp，最后决定还是先用反向代理这种最简单的方式实现无阻访问。
+终于搬砖把自己的 Tumblr 搭好，然后发现手机通过中移动的网络访问 Tumblr 有困难👀。考虑过迁移到 Github 上或利用 API 搭建一个 webapp，最后决定还是先用反向代理这种最简单的方式实现无阻访问。
 
 ---
 
@@ -20,7 +20,7 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 目前搜索到的现成 Nginx 配置基本类似如下：  
 
-<pre><code class="markdown">
+<pre><code>
 server
 {
 listen 80;
