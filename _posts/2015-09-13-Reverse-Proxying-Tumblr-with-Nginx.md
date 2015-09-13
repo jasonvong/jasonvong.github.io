@@ -39,9 +39,9 @@ sub_filter_once off;
 }</code></pre>
 (via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))  
   
-这个配置的逻辑是：Tumblr 端用`个人子域名.tumblr.com` 这种形式，`blog.个人域名.com` 则指向 Nginx 所在的服务器。当访问`blog.个人域名.com` 时，Nginx 用代理的方式把`个人子域名.tumblr.com` 的内容呈现出来并替换链接。(这个方案有一个「不完美」的地方，后面再说。)  
+这个配置的逻辑是：Tumblr 端用`个人子域名.tumblr.com` 这种形式，`blog.个人域名.com` 则指向 Nginx 所在的服务器。当浏览器访问`blog.个人域名.com` 时，Nginx 用代理的方式把`个人子域名.tumblr.com` 的内容呈现出来并替换所有链接。(这个方案有一个「不完美」的地方，后面再说。)  
 
-在我的 VPS 服务器上照此设置了 Nginx，然并卵。虽然这个配置逻辑上没错，但使用中 Tumblr 里所有的图片仍然显示不出来。  
+在我的 VPS 服务器上照此设置了 Nginx，然并卵。虽然这个配置逻辑上没错，但实际使用中所有的图片仍然显示不出来。  
 
 ---
 
@@ -51,7 +51,9 @@ Tumblr 上的图片分两种：装饰用的底图、logo 等等，以及发表�
 
 先处理 `static.tumblr.com`。首先，需要把内容中所有的`static.tumblr.com` 替换为 `static.个人域名.com`，即添加这行：
 <pre><code>sub_filter static.tumblr.com static.xXx.com;</code></pre>
-注意：并不是所有 Nginx 的版本都支持超过一个 `sub_filter`，最好更新到最新版。
+(注意：并不是所有 Nginx 的版本都支持超过一个 `sub_filter`，最好更新 Nginx 到最新版。)  
+
+
 ---
 
 ### 安装Ruby
