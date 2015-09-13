@@ -20,7 +20,7 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 目前搜索到的现成 Nginx 配置基本类似如下：  
 
-<pre>
+<code>
 server
 {
 listen 80;
@@ -36,7 +36,7 @@ proxy_set_header Accept-Encoding "";
 
 sub_filter 原地址 blog.adaromu.com;
 sub_filter_once off;
-}</pre>
+}</code>
 (via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))  
   
 在jekyll的官网上 [http://jekyllrb.com/](http://jekyllrb.com/) 其实已经说得比较明白了，我在这里还是简单的说一下吧。我用的是Windows系统。    
