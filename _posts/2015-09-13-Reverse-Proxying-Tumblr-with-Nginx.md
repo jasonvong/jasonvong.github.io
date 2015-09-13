@@ -39,7 +39,7 @@ sub_filter_once off;
 }</code></pre>
 (via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))  
   
-这个配置的逻辑是：Tumblr 端用 `xXx.tumblr.com` 这种形式，而 `blog.xXx.com` 则指向 Nginx 所在的服务器。当浏览器访问 `blog.xXx.com` 时，Nginx 用代理的方式把 `xXx.tumblr.com` 的内容呈现出来并替换所有链接。(这个方案有一个「不完美」的地方，后面再说。)  
+这个配置的逻辑是：Tumblr 端用 `xXx.tumblr.com` 这种形式，而 `blog.xXx.com` 则指向 Nginx 所在的服务器。当浏览器访问 `blog.xXx.com` 时，Nginx 用代理的方式把 `xXx.tumblr.com` 的内容呈现出来并替换相应链接。(这个方案有一个「不完美」的地方，后面再说。)  
 
 在我的 VPS 服务器上照此设置了 Nginx，然并卵。虽然这个配置逻辑上没错，但实际使用中所有的图片仍然显示不出来。  
 
@@ -47,7 +47,7 @@ sub_filter_once off;
 
 ### 分析和思路
 
-Tumblr 上的图片分两种：装饰用的底图、logo 等等，以及发表内容时上传的照片、图片。前者被 Tumblr 统一放在了 `static.tumblr.com` 服务器上，后者所在的服务器则使用了`数字.media.tumblr.com` 这种形式的子域名。之所以图片显示不出来，是因为我们还没有配置 Nginx 去「代理」这些服务器上的内容。  
+Tumblr 上的图片资源分两种：装饰用的底图、logo 等等，以及发表内容时上传的照片、图片。前者被 Tumblr 统一放在了 `static.tumblr.com` 服务器上，后者所在的服务器则使用了`数字.media.tumblr.com` 这种形式的子域名。之所以图片显示不出来，是因为我们还没有配置 Nginx 去「代理」这些服务器上的内容。  
 
 ---
 
@@ -56,7 +56,7 @@ Tumblr 上的图片分两种：装饰用的底图、logo 等等，以及发表�
 先处理 `static.tumblr.com`。首先，需要把内容中所有的`static.tumblr.com` 替换为 `static.xXx.com`，即添加这行：
 <pre><code>sub_filter static.tumblr.com static.xXx.com;</code></pre>
 (注#1：并不是所有 Nginx 的版本都支持超过一个 `sub_filter`，最好更新 Nginx 到最新版。)  
-(注#2：个人域名的 DNS 服务商最好支持 `catch-all`，即 `*.xXx.com` 这种形式子域名的解析，这样就不需要额外另建一个 `static.xXx.com` 这样的子域名。)  
+(注#2：个人域名的 DNS 服务商需要支持 `catch-all`，即 `*.xXx.com` 这种形式子域名的解析，这样就不用额外另建一个 `static.xXx.com` 。)  
 
 然后在配置尾部添加：  
 
@@ -75,6 +75,7 @@ Tumblr 上的图片分两种：装饰用的底图、logo 等等，以及发表�
     
     }
 
+重启 Nginx 并测试，logo 和 底图都出来了，说明思路正确。
 
 ---
 
