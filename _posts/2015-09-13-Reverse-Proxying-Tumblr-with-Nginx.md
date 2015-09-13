@@ -12,33 +12,36 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ## 序
 
-终于搬砖把自己的 Tumblr 搭好，然后发现手机通过中移动的网络访问 Tumblr 有困难👀。考虑过迁移到 Github 上或利用 API 搭建一个 webapp，最后决定还是先用反向代理这种最简单的方式实现无阻访问。
+终于搬砖将自己的 Tumblr 重新搭好，然后发现中国移动把 Tumblr 墙了👀。考虑过迁移到 Github 上或利用 API 搭建一个 webapp，最后决定还是先用反向代理这种简单粗暴直接的方式实现无阻访问。
 
 ---
 
-## 问题
+## 过程
 
-目前搜索到的现成 Nginx 配置基本类似如下：
+---
+
+### 基本设置
+
+一般都会用 Nginx 来做反向代理，但我不熟悉，所以最好的办法是搜索并使用现成的配置，再根据实际情况改进。参考了一个反向代理 Tumblr 的配置：
 <pre><code>server
 {
 listen 80;
-server_name blog.adaromu.com;      
+server_name blog.xXx.com;      
 
 location / {
-proxy_pass 原地址;
+proxy_pass http://xXx.tumblr.com;
 proxy_redirect off;
 proxy_set_header X-Real-IP $remote_addr;
 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 proxy_set_header Accept-Encoding "";
 }
 
-sub_filter 原地址 blog.adaromu.com;
+sub_filter xXX.tumblr.com blog.xXx.com;
 sub_filter_once off;
 }</code></pre>
 (via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))  
   
-在jekyll的官网上 [http://jekyllrb.com/](http://jekyllrb.com/) 其实已经说得比较明白了，我在这里还是简单的说一下吧。我用的是Windows系统。    
-主要环节有：安装Ruby，安装RubyGems，安装jekyll，安装代码高亮插件，安装node.js
+这个配置的逻辑是：Tumblr 端用`子域名.tumblr.com` 这种形式，`个人域名.com` 则指向 Nginx 所在的服务器。当访问者访问`个人域名.com` 时，Nginx 通过反向代理把`子域名.tumblr.com` 的内容呈现出来。这个方案有个「不完美」的地方，后面再说。
 
 ---
 
