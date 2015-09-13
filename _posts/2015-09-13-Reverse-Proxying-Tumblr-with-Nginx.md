@@ -18,9 +18,8 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ## 问题
 
-目前搜索到的现成 Nginx 配置基本类似如下：  
-
-<pre><code class="configuation">
+目前搜索到的现成 Nginx 配置基本类似如下：
+<pre><code>
 server
 {
 listen 80;
