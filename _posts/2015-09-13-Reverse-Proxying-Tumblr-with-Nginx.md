@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "用 Nginx 反向代理 Tumblr"
+title:  "反向代理 Tumblr"
 date:   2015-09-13 12:02
 categories: Nginx Tumblr
 excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反向代理。
@@ -12,7 +12,7 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ## 序
 
-终于搬砖将自己的 Tumblr 重新搭好，然后发现中国移动把 Tumblr 墙了👀。考虑过迁移到 Github 上或利用 API 搭建一个 webapp，最后决定还是先用反向代理这种简单粗暴直接的方式实现无阻访问。
+终于搬砖将自己的 tumblr 重新搭好，然后发现中国移动把 tumblr 墙了👀。考虑过干脆迁移到 Github 上或利用 API 搭建一个 web app，最后决定还是先用「反向代理」这种简单粗暴直接的方式实现无阻碍访问。
 
 ---
 
@@ -20,7 +20,7 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ### 基本设置
 
-一般都会用 Nginx 来做反向代理，但我不熟悉，所以最好的办法是搜索并使用现成的配置，再根据实际情况改进。参考了一个反向代理 Tumblr 的配置：
+一般都会用 Nginx 来做反向代理，但我不熟悉，所以必须先搜索现成的配置来用，再根据实际情况边学边改。参考了一个反向代理 Tumblr 的配置：
 <pre><code>server
 {
 listen 80;
@@ -39,16 +39,19 @@ sub_filter_once off;
 }</code></pre>
 (via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))  
   
-这个配置的逻辑是：Tumblr 端用`子域名.tumblr.com` 这种形式，`个人域名.com` 则指向 Nginx 所在的服务器。当访问`个人域名.com` 时，Nginx 用代理的方式把`子域名.tumblr.com` 的内容呈现出来。（这个方案有一个「不完美」的地方，后面再说。）  
+这个配置的逻辑是：Tumblr 端用`个人子域名.tumblr.com` 这种形式，`blog.个人域名.com` 则指向 Nginx 所在的服务器。当访问`blog.个人域名.com` 时，Nginx 用代理的方式把`个人子域名.tumblr.com` 的内容呈现出来并替换链接。(这个方案有一个「不完美」的地方，后面再说。)  
 
-在我的 VPS 服务器上照此设置了 Nginx，然并卵。虽然这个配置逻辑上没错，但实际上 Tumblr 里所有的图片都显示不出来。  
+在我的 VPS 服务器上照此设置了 Nginx，然并卵。虽然这个配置逻辑上没错，但使用中 Tumblr 里所有的图片仍然显示不出来。  
 
 ---
 
-### 分析
+### 分析和思路
 
-Tumblr 上的图片分两种：装饰用的底图、logo 等等，以及发表内容时上传的照片、图片。
+Tumblr 上的图片分两种：装饰用的底图、logo 等等，以及发表内容时上传的照片、图片。前者被 Tumblr 统一放在了 `static.tumblr.com` 上，后者所在的服务器则使用了`数字.media.tumblr.com` 这种形式的子域名。之所以图片显示不出来，是因为我们还没有配置 Nginx 去「代理」这些服务器上的内容。  
 
+先处理 `static.tumblr.com`。首先，需要把内容中所有的`static.tumblr.com` 替换为 `static.个人域名.com`，即添加这行：
+<pre><code>sub_filter static.tumblr.com static.xXx.com;</code></pre>
+注意：并不是所有 Nginx 的版本都支持超过一个 `sub_filter`，最好更新到最新版。
 ---
 
 ### 安装Ruby
