@@ -18,8 +18,6 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ## 过程
 
----
-
 ### 基本设置
 
 一般都会用 Nginx 来做反向代理，但我不熟悉，所以最好的办法是搜索并使用现成的配置，再根据实际情况改进。参考了一个反向代理 Tumblr 的配置：
@@ -41,7 +39,7 @@ sub_filter_once off;
 }</code></pre>
 (via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))  
   
-这个配置的逻辑是：Tumblr 端用`子域名.tumblr.com` 这种形式，`个人域名.com` 则指向 Nginx 所在的服务器。当访问者访问`个人域名.com` 时，Nginx 通过反向代理把`子域名.tumblr.com` 的内容呈现出来。这个方案有个「不完美」的地方，后面再说。
+这个配置的逻辑是：Tumblr 端用`子域名.tumblr.com` 这种形式，`个人域名.com` 则指向 Nginx 所在的服务器。当访问`个人域名.com` 时，Nginx 通过反向代理把`子域名.tumblr.com` 的内容呈现出来。这个方案有个「不完美」的地方，后面再说。
 
 ---
 
