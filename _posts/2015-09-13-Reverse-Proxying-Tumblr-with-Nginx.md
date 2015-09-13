@@ -12,7 +12,7 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ## 序
 
-终于搬砖将自己的 Tumblr 重新搭好，然后发现中国移动把 Tumblr 墙了👀。考虑过干脆迁移到 Github 上或利用 API 搭建一个 web app，最后决定还是先用「反向代理」这种简单粗暴直接的方式实现无阻碍访问。
+终于搬砖将自己的 Tumblr 重新搭好，然后发现中国移动把 Tumblr 墙了👀。只好再加把劲，用「反向代理」这种简单粗暴直接的方式实现无阻碍访问。
 
 ---
 
@@ -60,25 +60,25 @@ Tumblr 上的图片分两种：装饰用的底图、logo 等等，以及发表�
 
 然后在配置尾部添加：
 ```
-server
-{
-listen 80;
-server_name ~^(?<subdomain>\w+)\.jsv\.me;
-
-access_log /var/log/nginx/jsv.access.log;
-
-location / {
-resolver 8.8.8.8;
-proxy_pass http://$subdomain.tumblr.com;
-proxy_redirect off;
-proxy_set_header X-Real-IP $remote_addr;
-proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-proxy_set_header Accept-Encoding "";
-}
-
-sub_filter 'static.tumblr.com' 'static.jsv.me';
-sub_filter_once off;
-}
+    server
+    {
+    listen 80;
+    server_name ~^(?<subdomain>\w+)\.jsv\.me;
+    
+    access_log /var/log/nginx/jsv.access.log;
+    
+    location / {
+    resolver 8.8.8.8;
+    proxy_pass http://$subdomain.tumblr.com;
+    proxy_redirect off;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Accept-Encoding "";
+    }
+    
+    sub_filter 'static.tumblr.com' 'static.jsv.me';
+    sub_filter_once off;
+    }
 ```
 
 ---
