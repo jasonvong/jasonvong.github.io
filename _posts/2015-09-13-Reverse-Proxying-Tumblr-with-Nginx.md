@@ -63,21 +63,16 @@ Tumblr 上的图片分两种：装饰用的底图、logo 等等，以及发表�
     server
     {
     listen 80;
-    server_name ~^(?<subdomain>\w+)\.jsv\.me;
-    
-    access_log /var/log/nginx/jsv.access.log;
+    server_name static.xXx.com;
     
     location / {
-    resolver 8.8.8.8;
-    proxy_pass http://$subdomain.tumblr.com;
+    proxy_pass http://static.tumblr.com;
     proxy_redirect off;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Accept-Encoding "";
     }
     
-    sub_filter 'static.tumblr.com' 'static.jsv.me';
-    sub_filter_once off;
     }
 
 
