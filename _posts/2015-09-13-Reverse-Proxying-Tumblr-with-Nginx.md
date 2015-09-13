@@ -36,6 +36,7 @@ proxy_set_header Accept-Encoding "";
 sub_filter 原地址 blog.adaromu.com;
 sub_filter_once off;
 }</code></pre>
+(via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))
 在jekyll的官网上 [http://jekyllrb.com/](http://jekyllrb.com/) 其实已经说得比较明白了，我在这里还是简单的说一下吧。我用的是Windows系统。    
 主要环节有：安装Ruby，安装RubyGems，安装jekyll，安装代码高亮插件，安装node.js
 
