@@ -12,12 +12,13 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ## 序
 
-发现手机通过中移动的网络访问 Tumblr 有困难。
+终于搬砖把自己的 Tumblr 搭好，然后发现手机通过中移动的网络访问 Tumblr 有困难。考虑过搬运到 Jekyll 上或利用 API 搭建一个 webapp，最后决定还是先采取反向代理这种最简单的方式实现访问无阻。
 
 ---
 
-## 搭建过程
+## 问题
 
+目前
 在jekyll的官网上 [http://jekyllrb.com/](http://jekyllrb.com/) 其实已经说得比较明白了，我在这里还是简单的说一下吧。我用的是Windows系统。    
 主要环节有：安装Ruby，安装RubyGems，安装jekyll，安装代码高亮插件，安装node.js
 
