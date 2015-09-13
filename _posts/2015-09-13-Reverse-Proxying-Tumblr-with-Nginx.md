@@ -39,7 +39,15 @@ sub_filter_once off;
 }</code></pre>
 (via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))  
   
-这个配置的逻辑是：Tumblr 端用`子域名.tumblr.com` 这种形式，`个人域名.com` 则指向 Nginx 所在的服务器。当访问`个人域名.com` 时，Nginx 通过反向代理把`子域名.tumblr.com` 的内容呈现出来。这个方案有个「不完美」的地方，后面再说。
+这个配置的逻辑是：Tumblr 端用`子域名.tumblr.com` 这种形式，`个人域名.com` 则指向 Nginx 所在的服务器。当访问`个人域名.com` 时，Nginx 用代理的方式把`子域名.tumblr.com` 的内容呈现出来。（这个方案有一个「不完美」的地方，后面再说。）  
+
+在我的 VPS 服务器上照此设置了 Nginx，然并卵。虽然这个配置逻辑上没错，但实际上 Tumblr 里所有的图片都显示不出来。  
+
+---
+
+### 分析
+
+Tumblr 上的图片分两种：装饰用的底图、logo 等等，以及发表内容时上传的照片、图片。
 
 ---
 
