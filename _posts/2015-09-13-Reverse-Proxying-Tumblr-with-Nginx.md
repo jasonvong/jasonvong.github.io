@@ -47,7 +47,7 @@ sub_filter_once off;
 
 ### 分析和思路
 
-Tumblr 上的图片资源分两种：装饰用的底图、logo 等等，以及发表内容时上传的照片、图片。前者被 Tumblr 统一放在了 `static.tumblr.com` 服务器上，后者所在的服务器则使用了`数字.media.tumblr.com` 这种形式的子域名。之所以图片显示不出来，是因为我们还没有配置 Nginx 去「代理」这些服务器上的内容。  
+Tumblr 上的图片资源分两种：装饰用的底图、logo 等等，以及发表内容时上传的照片、图片。前者被 Tumblr 统一放在了 `static.tumblr.com` 服务器上，后者所在的服务器则使用了 `数字.media.tumblr.com` 这种形式的子域名。之所以图片显示不出来，是因为还没有配置 Nginx 去「代理」这些提供图片的服务器。  
 
 ---
 
@@ -55,10 +55,10 @@ Tumblr 上的图片资源分两种：装饰用的底图、logo 等等，以及�
 
 先处理 `static.tumblr.com`。首先，需要把内容中所有的`static.tumblr.com` 替换为 `static.xXx.com`，即添加这行：
 <pre><code>sub_filter static.tumblr.com static.xXx.com;</code></pre>
-(注#1：并不是所有 Nginx 的版本都支持超过一个 `sub_filter`，最好更新 Nginx 到最新版。)  
-(注#2：个人域名的 DNS 服务商需要支持 `catch-all`，即 `*.xXx.com` 这种形式子域名的解析，这样就不用额外另建一个 `static.xXx.com` 。)  
+(注#1：并不是所有 Nginx 的版本都支持超过一个 `sub_filter`，所以请更新 Nginx 到最新版。)  
+(注#2：个人域名的 DNS 服务商最好支持 `catch-all`，即 `*.xXx.com` 这种形式的解析，这样就不用额外添加每一个子域名。)  
 
-然后在配置尾部添加：  
+然后在配置尾部添加这一段：  
 
     server
     {
@@ -77,17 +77,54 @@ Tumblr 上的图片资源分两种：装饰用的底图、logo 等等，以及�
 
 重启 Nginx 并测试，logo 和 底图都出来了，说明思路正确。
 
+下一步处理 `数字.media.tumblr.com`。这里麻烦的地方是里面的 `数字` 并不确定具体是多少，按上面的方法将所有的数字组合都设置一遍会显得比较蠢。换一种思路，其实并不需要知道具体数字是多少，只需替换确定的部分，即 `media.tumblr.com` 即可。添加一行：
+    sub_filter 'media.tumblr.com' 'media.xXx.com';
+
+以及尾部这一段：
+
+    server
+    {
+    listen 80;
+    server_name ~^(?<subdomain>\w+)\.media\.xXx\.com$;
+    
+    location / {
+    resolver 8.8.8.8;
+    proxy_pass http://$subdomain.media.tumblr.com;
+    proxy_redirect off;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Accept-Encoding "";
+    }
+    
+    }
+
+解释一下：由于并不知道具体的 `数字` 是多少，这里使用了正则表达式和变量来替换 `数字` 部分。另外，与 Nginx 的设计有关，这里必须加一行 `resolver` 来作 DNS 解析否则 Nginx 会报错。
+
+测试，成功，所有图片都出来了，但还有一些瑕疵。分析了一下应该是跟 Tumblr 提供的一些 JS 有关，这是在另一个服务器上：`assets.tumblr.com`。既然想到了用正则表达式加变量，直接修改上面 `static.tumblr.com` 那段就行了，改为：
+
+    server
+    {
+    listen 80;
+    server_name ~^(?<subdomain>\w+)\.xXx\.com$;
+    
+    location / {
+    resolver 8.8.8.8;
+    proxy_pass http://$subdomain.tumblr.com;
+    proxy_redirect off;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Accept-Encoding "";
+    }
+    
+    }
+
+这样，即便 Tumblr 再添加其它服务器，只要域名是 `something.tumblr.com` 这种形式，这个反向代理都有效。
+
 ---
 
-### 安装Ruby
+### 进阶
 
-ruby官网下载安装：[https://www.ruby-lang.org/en/downloads/](https://www.ruby-lang.org/en/downloads/)
-
-安装完成后配置环境变量
-
-在命令提示符中，得到ruby版本号，如下图，即安装成功
-![ruby-v]({{ "/css/pics/ruby-v.png"}})
-
+之前提到，上面的方案有一个「不完美」的地方 -- 现在其实同时存在着两个内容完全相同的网站: 一个是 `xXx.tumblr.com`，一个是 `blog.xXx.com`，虽然后者只是前者的反向代理，但对搜索引擎来说这是两个网站。
 ---
 
 ### 安装RubyGems
