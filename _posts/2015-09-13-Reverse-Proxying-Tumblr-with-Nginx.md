@@ -128,7 +128,7 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
 
 ## 总结 
 
-*  个人域名 `xXx.com`，并将域名 DNS 服务商托管给 DNSPod；
+*  个人域名 `xXx.com`，并将域名 DNS 托管给 DNSPod；
 *  在 Tumblr 上将 URL 设为个人域名：`blog.xXx.com`；
 *  VPS 或任何可安装 Nginx 的服务器，按上述进行设置；
 *  在 DNSPod 上将 `blog.xXx.com` 设为多线路解析，国内解析到 Nginx 服务器 IP，默认则解析到 Tumblr 的 IP；
@@ -137,9 +137,9 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
 ---
 
 ## 参考
-http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置  
-http://jyorr.com/post/4085366506/reverse-proxying-for-tumblr-w-nginx  
-http://www.storyday.com/html/y2012/3165_on-tumblr-reverse-agent.html  
-http://webmasters.stackexchange.com/questions/55698/nginx-reverse-proxy-for-tumblr  
+*  [](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置)  
+*  [](http://jyorr.com/post/4085366506/reverse-proxying-for-tumblr-w-nginx)  
+*  [](http://www.storyday.com/html/y2012/3165_on-tumblr-reverse-agent.html)  
+*  [](http://webmasters.stackexchange.com/questions/55698/nginx-reverse-proxy-for-tumblr)  
 
 
