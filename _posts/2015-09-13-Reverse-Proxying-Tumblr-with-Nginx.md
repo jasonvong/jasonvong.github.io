@@ -126,129 +126,20 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
 
 ---
 
-### 安装RubyGems
+## 总结 
 
-官网下载 [http://rubygems.org/pages/download](http://rubygems.org/pages/download) rubygems-2.4.5.zip   
-
-cd到RubyGems目录   
-
-![ruby-gems]({{ "/css/pics/ruby-gems.png"}})    
-
-执行安装   
-
-![ruby-gems-setup]({{"/css/pics/ruby-gems-setup.png"}})   
+*  个人域名 `xXx.com`，并将域名 DNS 服务商托管给 DNSPod；
+*  在 Tumblr 上将 URL 设为个人域名：`blog.xXx.com`；
+*  VPS 或任何可安装 Nginx 的服务器，按上述进行设置；
+*  在 DNSPod 上将 `blog.xXx.com` 设为多线路解析，国内解析到 Nginx 服务器 IP，默认则解析到 Tumblr 的 IP；
+*  同时在 DNSPod 上将 `*.xXx.com` 解析到 Nginx 服务器 IP。
 
 ---
 
-### 用RubyGems安装Jekyll
-
-执行下面的语句安装   
-
-![jekyll-setup]({{"/css/pics/jekyll-setup.png"}})   
-
-安装结束画面   
-
-![jekyll-setup-finish]({{"/css/pics/jekyll-setup-finish.png"}})   
-
-至此jekyll就已经安装完毕了，后续就是个性化的自己设定了。   
-
----
-
-### 创建博客
-
-在d盘新建一个工作区jekyllWorkspace
-
-cd到jekyllWorkspace   
-
-执行jekyll new name创建新的工作区   
-
-![jekyllWorkSpace]({{"/css/pics/jekyllWorkSpace.png"}})   
-
-文件结构如下：   
-
-![jekyllFiles]({{"/css/pics/jekyllFiles.png"}})
-
-cd到博客文件夹，开启服务器   
-
-![serve]({{"/css/pics/serve.png"}})   
-
-watch为了检测文件夹内的变化，即修改后不需要重新启动jekyll
-
-我的环境下启动报错(你的可能没有)，再安装yajl-ruby和rouge  
-
-![yajl]({{"/css/pics/yajl.png"}})
-
-再次启动服务器成功
-
-![serve-sucess]({{"/css/pics/serve-sucess.png"}})
-
-访问 http://localhost:4000/   
-
-![browser]({{"/css/pics/browser.png"}})   
-
-详细文章页面   
-
-![browser2]({{"/css/pics/browser2.png"}})  
-
----
-
-##后续 
-
-*  整个安装过程参考了jekyll官网，注意jekyll还有一个简体中文官网，不过比较坑（我就被坑了），有些内容没有翻译过来，有可能会走弯路，建议如果想看中文的相关资料，也要中英对照着阅读。[jekyll中文网 http://jekyllcn.com](http://jekyllcn.com), [jekyll英文网 http://jekyllrb.com](http://jekyllrb.com)
-*  jekyll中的css是用sass写的，当然直接在`_sass/_layout.scss`中添加css也是可以的。
-*  本文是用Markdown格式来写的，相关语法可参考： [Markdown 语法说明 (简体中文版) http://wowubuntu.com/markdown/](http://wowubuntu.com/markdown/)  
-*  按照本文的说明搭建完博客后，用`github Pages`托管就可以看到了。注意，在github上面好像不支持rouge，所以要push到github上时，我将配置文件_config.yml中的代码高亮改变为`highlighter: pygments`就可以了
-*  博客默认是没有评论系统的，本文的评论系统使用了多说，详细安装办法可访问[多说官网 http://duoshuo.com/](http://duoshuo.com/)，当然也可以使用[搜狐畅言 http://changyan.sohu.com/](http://changyan.sohu.com/)作为评论系统。	
-*  也可以绑定自己的域名，如果没有域名，可以在[godaddy http://www.godaddy.com/](http://www.godaddy.com/)上将域名放入购物车等待降价，买之。
-*  祝各位新年快乐！
-
----
-
-## 可能出现的问题
-
-### `hitimes/hitimes (LoadError)`
-
-**错误代码：**
-
-<pre><code class="markdown">C:/Ruby22/lib/ruby/2.2.0/rubygems/core_ext/kernel_require.rb:54:in `require': cannot load such file -- hitimes/hitimes (LoadError)</code></pre>
-
-**解决方法：**
-
-在stackoverflow上又一个很好的解决方法。[hitimes require error when running jekyll serve on windows 8.1](http://stackoverflow.com/questions/28985481/hitimes-require-error-when-running-jekyll-serve-on-windows-8-1) 虽然上面的题主问的是 win 8.1 系统下的情况，但是同样适用于 win7。下面我简单翻译一下错误原因和解决方法。
-
-> 可能是 Ruby 2.2 和 hitimes-1.2.2-x86-mingw32 中有一些 ABI 变化，少了一些相关的类库。
-> 
-> 所以卸载 hitimes 并通过 `--platform ruby` 重装即可。代码如下：
->
-><pre><code class="markdown">gem uni hitimes
-**Remove ALL versions**
-gem ins hitimes -v 1.2.1 --platform ruby
-</code></pre>
-> 然后将自动重新编译 hitimes 并适用于 Ruby 2.2
-
-下面是我自己的卸载和安装过程：
-
-<pre><code class="markdown">E:\GitWorkSpace\gaohaoyang.github.io>gem uni hitimes
-
-You have requested to uninstall the gem:
-        hitimes-1.2.2-x86-mingw32
-
-timers-4.0.1 depends on hitimes (>= 0)
-If you remove this gem, these dependencies will not be met.
-Continue with Uninstall? [yN]  y
-Successfully uninstalled hitimes-1.2.2-x86-mingw32
-
-E:\GitWorkSpace\gaohaoyang.github.io>gem ins hitimes -v 1.2.1 --platform ruby
-Fetching: hitimes-1.2.1.gem (100%)
-Temporarily enhancing PATH to include DevKit...
-Building native extensions.  This could take a while...
-Successfully installed hitimes-1.2.1
-Parsing documentation for hitimes-1.2.1
-Installing ri documentation for hitimes-1.2.1
-Done installing documentation for hitimes after 1 seconds
-1 gem installed</code></pre>
-
-
-关于，[hitimes](https://rubygems.org/gems/hitimes/versions/1.2.2) 是一个快速的高效的定时器解决方案库，详情可以去官网查看。
+## 参考
+http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置
+http://jyorr.com/post/4085366506/reverse-proxying-for-tumblr-w-nginx
+http://www.storyday.com/html/y2012/3165_on-tumblr-reverse-agent.html
+http://webmasters.stackexchange.com/questions/55698/nginx-reverse-proxy-for-tumblr
 
 
