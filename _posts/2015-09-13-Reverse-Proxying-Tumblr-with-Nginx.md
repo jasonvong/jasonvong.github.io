@@ -51,14 +51,12 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
 
 ---
 
-### 思路和改进
+### 改进
 
-只要把页面里所有链接中的 `tumblr.com` 替换为 `xXx.com`
-
-先处理 `static.tumblr.com`。首先，需要把内容中所有的`static.tumblr.com` 替换为 `static.xXx.com`，即添加这行：
-<pre><code>sub_filter static.tumblr.com static.xXx.com;</code></pre>
+利用 Nginx 的 `sub_filter`，先把页面中所有的 `tumblr.com` 替换为 `static.xXx.com`，即添加这行：
+<pre><code>sub_filter tumblr.com xXx.com;</code></pre>
 (注#1：并不是所有 Nginx 的版本都支持超过一个 `sub_filter`，所以请更新 Nginx 到最新版。)  
-(注#2：个人域名的 DNS 服务商最好支持 `catch-all`，即 `*.xXx.com` 这种形式的解析，这样就不用额外添加每一个子域名。)  
+(注#2：个人域名的 DNS 服务商最好支持 `catch-all`，即 `*.xXx.com` 这种形式的解析，这样就不用额外处理每一个子域名。)  
 
 然后在配置尾部添加这一段：  
 
