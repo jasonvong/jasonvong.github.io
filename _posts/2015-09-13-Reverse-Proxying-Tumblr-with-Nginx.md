@@ -2,6 +2,7 @@
 layout: post
 title:  "反向代理 Tumblr"
 date:   2015-09-13 12:02
+author: jsv
 categories: Nginx Tumblr
 excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反向代理。
 ---
