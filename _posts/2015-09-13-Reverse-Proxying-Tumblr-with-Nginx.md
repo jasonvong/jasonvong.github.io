@@ -110,7 +110,7 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
     server
     {
     listen 80;
-    server_name ~^(?<subdomain>\S+)\.xXX\.com;
+    server_name ~^(?<subdomain>\S+)\.xXx\.com;
     
     location / {
     resolver 8.8.8.8;
