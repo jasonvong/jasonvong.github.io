@@ -20,7 +20,7 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ### 初始设置
 
-一般都会用 Nginx 来做反向代理，这个我不熟，所以必须先搜索现成的配置来用，再根据实际情况边学边改。找到了一个反向代理 Tumblr 的配置并稍微修改了一下：
+一般都会用 Nginx 来做反向代理，这个我不熟，所以必须先搜索现成的配置来用，再根据实际情况边学边改。找到了一个反向代理 Tumblr 的配置：
 <pre><code>server
 {
 listen 80;
@@ -39,7 +39,7 @@ sub_filter_once off;
 }</code></pre>
 (via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))  
   
-在 VPS 服务器上照此设置了 Nginx，然并卵，实际使用中所有的图片仍然显示不出来。  
+在自己的 VPS 服务器上照此设置了 Nginx，然并卵，实际使用中所有的图片仍然显示不出来。  
 
 ---
 
@@ -57,7 +57,7 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
 <pre><code>sub_filter tumblr.com xXx.com;</code></pre>
 (注#1：并不是所有 Nginx 的版本都支持超过一个 `sub_filter`，所以请更新 Nginx 到最新版。)  
 (注#2：个人域名的 DNS 服务商最好支持 `catch-all`，即 `*.xXx.com` 这种形式的解析，这样就不用额外处理每一个子域名。)  
-之后利用正则表达式和变量，配置对上述其它服务器的反向代理：
+之后利用正则表达式和变量，配置对上述服务器的反向代理：
 
     server
     {
@@ -74,6 +74,7 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
     }
     
     }
+
 (这里必须加一行 `resolver` 来作 DNS 解析，否则 Nginx 会报错。)
 
 经测试，图片可以显示出来了。
