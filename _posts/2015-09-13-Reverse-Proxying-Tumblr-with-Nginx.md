@@ -53,7 +53,7 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
 
 ### 改进设置
 
-利用 Nginx 的 `sub_filter`，先把页面中所有的 `tumblr.com` 替换为 `static.xXx.com`，即添加这行：
+利用 Nginx 的 `sub_filter`，先把页面中所有的 `tumblr.com` 替换为 `xXx.com`，即添加这行：
 <pre><code>sub_filter tumblr.com xXx.com;</code></pre>
 (注#1：并不是所有 Nginx 的版本都支持超过一个 `sub_filter`，所以请更新 Nginx 到最新版。)  
 (注#2：个人域名的 DNS 服务商最好支持 `catch-all`，即对 `*.xXx.com` 这种形式的解析，这样就不用额外处理每一个子域名。)  
@@ -84,7 +84,7 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
 
 ### 进阶
 
-目前有一个「不完美」的地方，即 `xXx.tumblr.com` 仍可被单独访问（特别是在墙外）。虽然 `blog.xXx.com` 只是反向代理到 `xXx.tumblr.com`，但对搜索引擎来说它们是内容完全相同但域名不同的两个网站，不利于 SEO。既然 Tumblr 支持个人域名，最好的办法就是实现「一个域名同时指向 Tumblr 和反向代理服务器」。可以利用 DNSPod 的多线路解析，即国外访问 `blog.xXx.com` 时，指向的是 Tumblr 的服务器 IP，而国内访问 `blog.xXX.com` 时，指向的是反向代理服务器 IP。
+目前有一个「不完美」的地方，即 `xXx.tumblr.com` 仍可被单独访问。虽然 `blog.xXx.com` 只是反向代理到 `xXx.tumblr.com`，但对搜索引擎来说它们是内容完全相同但域名不同的两个网站，不利于 SEO。既然 Tumblr 支持个人域名，最好的办法就是实现「一个域名同时指向 Tumblr 和反向代理服务器」。可以利用 DNSPod 的多线路解析，即国外访问 `blog.xXx.com` 时，指向的是 Tumblr 的服务器 IP，而国内访问 `blog.xXX.com` 时，指向的是反向代理服务器 IP。
 
 综上，进一步修改 Nginx 配置的完整结果：
 
