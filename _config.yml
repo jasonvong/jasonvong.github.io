@@ -11,7 +11,6 @@ description: 「a log of tech stuff」
 # url: "http://yourdomain.com" # the base hostname & protocol for your site
 # twitter_username: 
 # github_username:  
-page_author: jsv
 permalink: /:year/:month/:day/:title.html
 
 # Build settings
