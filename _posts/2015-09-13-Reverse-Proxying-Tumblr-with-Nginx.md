@@ -137,9 +137,9 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
 ---
 
 ## 参考
-*  <http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置>  
-*  <http://jyorr.com/post/4085366506/reverse-proxying-for-tumblr-w-nginx>  
-*  <http://www.storyday.com/html/y2012/3165_on-tumblr-reverse-agent.html>  
-*  <http://webmasters.stackexchange.com/questions/55698/nginx-reverse-proxy-for-tumblr>  
+*  [Nginx反向代理Tumblr配置](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置)  
+*  [Reverse proxying for Tumblr w/ Nginx](http://jyorr.com/post/4085366506/reverse-proxying-for-tumblr-w-nginx)  
+*  [关于tumblr反向代理](http://www.storyday.com/html/y2012/3165_on-tumblr-reverse-agent.html)  
+*  [Nginx Reverse Proxy for Tumblr](http://webmasters.stackexchange.com/questions/55698/nginx-reverse-proxy-for-tumblr)  
 
 
