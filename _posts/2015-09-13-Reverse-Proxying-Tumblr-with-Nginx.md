@@ -12,15 +12,15 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ## 序
 
-终于搬砖将自己的 Tumblr 重新搭好，然后发现中国移动把 Tumblr 墙了👀。只好再加把劲，用「反向代理」这种简单粗暴直接的方式实现无阻碍访问。
+终于搬砖将自己的 Tumblr 重新搭好，然后发现中国移动把 Tumblr 墙了👀。只好用「反向代理」这种简单粗暴直接的方式实现无阻碍访问。
 
 ---
 
 ## 过程
 
-### 基本设置
+### 初始设置
 
-一般都会用 Nginx 来做反向代理，但我不熟悉，所以必须先搜索现成的配置来用，再根据实际情况边学边改。参考了一个反向代理 Tumblr 的配置：
+一般都会用 Nginx 来做反向代理，这个我不熟，所以必须先搜索现成的配置来用，再根据实际情况边学边改。找到了一个反向代理 Tumblr 的配置：
 <pre><code>server
 {
 listen 80;
@@ -39,19 +39,21 @@ sub_filter_once off;
 }</code></pre>
 (via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))  
   
-这个配置的逻辑是：Tumblr 端用 `xXx.tumblr.com` 这种形式，而 `blog.xXx.com` 则指向 Nginx 所在的服务器。当浏览器访问 `blog.xXx.com` 时，Nginx 用代理的方式把 `xXx.tumblr.com` 的内容呈现出来并替换相应链接。(这个方案有一个「不完美」的地方，后面再说。)  
-
-在我的 VPS 服务器上照此设置了 Nginx，然并卵。虽然这个配置逻辑上没错，但实际使用中所有的图片仍然显示不出来。  
+在我的 VPS 服务器上照此设置了 Nginx，然并卵，实际使用中所有的图片仍然显示不出来。  
 
 ---
 
-### 分析和思路
+### 分析
 
-Tumblr 上的图片资源分两种：装饰用的底图、logo 等等，以及发表内容时上传的照片、图片。前者被 Tumblr 统一放在了 `static.tumblr.com` 服务器上，后者所在的服务器则使用了 `数字.media.tumblr.com` 这种形式的子域名。之所以图片显示不出来，是因为还没有配置 Nginx 去「代理」这些提供图片的服务器。  
+Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及发表内容时上传的照片、动图等。前者被 Tumblr 统一放在了 `static.tumblr.com` 服务器上，后者所在的服务器则使用了 `数字.media.tumblr.com` 这种形式的子域名。  
+
+事实上除了图片，Tumblr 还会在类似 `assets.tumblr.com` 这样的服务器上放置一些 JS 代码。所以，需要针对所有这些服务器设置反向代理。
 
 ---
 
-### 改进
+### 思路和改进
+
+只要把页面里所有链接中的 `tumblr.com` 替换为 `xXx.com`
 
 先处理 `static.tumblr.com`。首先，需要把内容中所有的`static.tumblr.com` 替换为 `static.xXx.com`，即添加这行：
 <pre><code>sub_filter static.tumblr.com static.xXx.com;</code></pre>
@@ -98,33 +100,16 @@ Tumblr 上的图片资源分两种：装饰用的底图、logo 等等，以及�
     
     }
 
-解释一下：由于并不知道具体的 `数字` 是多少，这里使用了正则表达式和变量来替换 `数字` 部分。另外，与 Nginx 的设计有关，这里必须加一行 `resolver` 来作 DNS 解析否则 Nginx 会报错。
+解释一下：由于并不知道具体的 `数字` 是多少，这里使用了正则表达式和变量来替换 `数字` 部分。另外，这里必须加一行 `resolver` 来作 DNS 解析否则 Nginx 会报错。
 
-测试，成功，所有图片都出来了，但还有一些瑕疵。分析了一下应该是跟 Tumblr 提供的一些 JS 有关，这是在另一个服务器上：`assets.tumblr.com`。既然想到了用正则表达式加变量，直接修改上面 `static.tumblr.com` 那段就行了，改为：
-
-    server
-    {
-    listen 80;
-    server_name ~^(?<subdomain>\w+)\.xXx\.com$;
-    
-    location / {
-    resolver 8.8.8.8;
-    proxy_pass http://$subdomain.tumblr.com;
-    proxy_redirect off;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Accept-Encoding "";
-    }
-    
-    }
-
-这样，即便 Tumblr 再添加其它服务器，只要域名是 `something.tumblr.com` 这种形式，这个反向代理都有效。
+按照这个思路，再添上
 
 ---
 
 ### 进阶
 
-之前提到，上面的方案有一个「不完美」的地方 -- 现在其实同时存在着两个内容完全相同的网站: 一个是 `xXx.tumblr.com`，一个是 `blog.xXx.com`，虽然后者只是前者的反向代理，但对搜索引擎来说这是两个网站。
+之前提到，上面的方案有一个「不完美」的地方 － 现在其实同时存在着两个内容完全相同的网站: 一个是 `xXx.tumblr.com`，一个是 `blog.xXx.com`，虽然后者只是前者的反向代理，但对搜索引擎来说这是两个网站。
+
 ---
 
 ### 安装RubyGems
