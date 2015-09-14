@@ -12,7 +12,7 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ## 序
 
-终于搬砖将自己的 Tumblr 重新搭好，然后发现中国移动把 Tumblr 墙了👀。只好用「反向代理」这种简单粗暴直接的方式实现无阻碍访问。
+终于搬砖将自己的 Tumblr 重新搭好，然后发现中国移动把 Tumblr 墙了👀。决定用「反向代理」这种简单粗暴直接的方式实现无阻碍访问。
 
 ---
 
@@ -20,7 +20,7 @@ excerpt: 利用 DNSPod 的多线路解析，通过 Nginx 实现对 Tumblr 的反
 
 ### 初始设置
 
-一般都会用 Nginx 来做反向代理，这个我不熟，所以必须先搜索现成的配置来用，再根据实际情况边学边改。找到了一个反向代理 Tumblr 的配置：
+一般都会用 Nginx 来做反向代理，这个我不熟，所以必须先搜索现成的配置来用，再根据实际情况边学边改。找到了一个反向代理 Tumblr 的配置并稍微修改了一下：
 <pre><code>server
 {
 listen 80;
@@ -39,7 +39,7 @@ sub_filter_once off;
 }</code></pre>
 (via [Wood Tale](http://adaromu.tumblr.com/post/33722081482/nginx反向代理tumblr配置))  
   
-在我的 VPS 服务器上照此设置了 Nginx，然并卵，实际使用中所有的图片仍然显示不出来。  
+在 VPS 服务器上照此设置了 Nginx，然并卵，实际使用中所有的图片仍然显示不出来。  
 
 ---
 
@@ -57,39 +57,16 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
 <pre><code>sub_filter tumblr.com xXx.com;</code></pre>
 (注#1：并不是所有 Nginx 的版本都支持超过一个 `sub_filter`，所以请更新 Nginx 到最新版。)  
 (注#2：个人域名的 DNS 服务商最好支持 `catch-all`，即 `*.xXx.com` 这种形式的解析，这样就不用额外处理每一个子域名。)  
-
-然后在配置尾部添加这一段：  
-
-    server
-    {
-    listen 80;
-    server_name static.xXx.com;
-    
-    location / {
-    proxy_pass http://static.tumblr.com;
-    proxy_redirect off;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Accept-Encoding "";
-    }
-    
-    }
-
-重启 Nginx 并测试，logo 和 底图都出来了，说明思路正确。
-
-下一步处理 `数字.media.tumblr.com`。这里麻烦的地方是里面的 `数字` 并不确定具体是多少，按上面的方法将所有的数字组合都设置一遍会显得比较蠢。换一种思路，其实并不需要知道具体数字是多少，只需替换确定的部分，即 `media.tumblr.com` 即可。添加一行：
-    sub_filter 'media.tumblr.com' 'media.xXx.com';
-
-以及尾部这一段：
+之后利用正则表达式和变量，配置对上述其它服务器的反向代理：
 
     server
     {
     listen 80;
-    server_name ~^(?<subdomain>\w+)\.media\.xXx\.com$;
+    server_name ~^(?<subdomain>\S+)\.xXx\.com$;
     
     location / {
     resolver 8.8.8.8;
-    proxy_pass http://$subdomain.media.tumblr.com;
+    proxy_pass http://$subdomain.tumblr.com;
     proxy_redirect off;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -97,16 +74,15 @@ Tumblr 把图片分为两种：装饰网页用的底图、logo 等等，以及�
     }
     
     }
+(这里必须加一行 `resolver` 来作 DNS 解析，否则 Nginx 会报错。)
 
-解释一下：由于并不知道具体的 `数字` 是多少，这里使用了正则表达式和变量来替换 `数字` 部分。另外，这里必须加一行 `resolver` 来作 DNS 解析否则 Nginx 会报错。
-
-按照这个思路，再添上
+经测试，图片可以显示出来了。
 
 ---
 
 ### 进阶
 
-之前提到，上面的方案有一个「不完美」的地方 － 现在其实同时存在着两个内容完全相同的网站: 一个是 `xXx.tumblr.com`，一个是 `blog.xXx.com`，虽然后者只是前者的反向代理，但对搜索引擎来说这是两个网站。
+上面的方案有一个「不完美」的地方 － 现在其实同时存在着两个内容完全相同的网站: 一个是 `xXx.tumblr.com`，一个是 `blog.xXx.com`，虽然后者只是前者的反向代理，但对搜索引擎来说这是两个网站。
 
 ---
 
