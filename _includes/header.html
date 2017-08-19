@@ -23,7 +23,7 @@
           {% else %}
           <li>
         {% endif %}
-          <a href="{{ site.baseurl }}/"><span class="glyphicon glyphicon-th-large"></span> Home</a></li>
+          <a href="{{ site.baseurl }}/"> Home</a></li>
 
         {% for p in site.pages %}
           {% if p.title %}
@@ -32,7 +32,7 @@
               {% else %}
               <li>
             {% endif %}
-            <a href="{{ p.url | prepend: site.baseurl }}"><span class="glyphicon {{ p.icon }}"></span> {{ p.title }}</a></li>
+            <a href="{{ p.url | prepend: site.baseurl }}"> {{ p.title }}</a></li>
           {% endif %}
         {% endfor %}
       </ul>
