@@ -11,7 +11,8 @@ article p{
 }
 pre{
 	padding: 0;
-	background: none;
+/*	background: none;*/
+	background-color: #002b36;
 }
 
 pre code{
